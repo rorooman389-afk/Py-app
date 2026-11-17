@@ -1,7 +1,7 @@
 import streamlit as st
 import os
 
-st.title("نظام إدخال وتخزين البيانات المتعددة")
+st.title("نظام تخزين المخالفة")
 
 # نموذج إدخال البيانات
 with st.form("data_form"):
