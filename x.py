@@ -1,26 +1,48 @@
 import streamlit as st
 import os
 
-st.title("إدارة البيانات التفاعلية")
+st.title("نظام إدخال وتخزين البيانات المتعددة")
 
-id_val = st.text_input("المعرف (ID)")
-date_val = st.text_input("التاريخ")
-class_val = st.text_input("الفصل (Class)")
+# نموذج إدخال البيانات
+with st.form("data_form"):
+    id_val = st.text_input("المعرف (ID)")
+    date_val = st.text_input("التاريخ")
+    class_val = st.text_input("الفصل (Class)")
+    
+    # زر داخل النموذج لحفظ البيانات وإضافتها للملف
+    submit_button = st.form_submit_button(label="إضافة وحفظ")
 
-if st.button("حفظ وعرض"):
+if submit_button:
     if id_val and date_val and class_val:
-        entry = f"{id_val} - {date_val} - {class_val}\n"
-        with open("R.txt", "a") as f:
+        # تنسيق السطر المراد حفظه
+        entry = f"المعرف: {id_val} | التاريخ: {date_val} | الفصل: {class_val}\n"
+        
+        # حفظ البيانات في ملف R.txt (بوضع a+ لإضافة البيانات الجديدة دون مسح القديمة)
+        with open("R.txt", "a", encoding="utf-8") as f:
             f.write(entry)
-        st.success("تم الحفظ!")
+            
+        st.success("تمت إضافة وحفظ البيانات بنجاح!")
     else:
-        st.warning("يرجى ملء جميع الحقول.")
+        st.warning("يرجى ملء جميع الحقول قبل الإضافة.")
 
-st.subheader("البيانات المحفوظة")
+st.divider()
+
+# عرض محتوى ملف R.txt بالكامل (جميع المعرفات والبيانات المخزنة)
+st.subheader("سجل البيانات المحفوظة في الملف")
 if os.path.exists("R.txt"):
-    with open("R.txt", "r") as f:
+    with open("R.txt", "r", encoding="utf-8") as f:
         data = f.read()
-        st.text_area("السجل الحالي", data, height=150)
+        if data.strip():
+            st.text_area("جميع المدخلات السابقة", data, height=200)
+            
+            # زر لتحميل الملف بصيغة txt مباشرة من المتصفح
+            st.download_button(
+                label="تحميل ملف البيانات (R.txt)",
+                data=data,
+                file_name="R.txt",
+                mime="text/plain"
+            )
+        else:
+            st.info("الملف فارغ حالياً.")
 else:
-    st.info("لا توجد بيانات مسجلة بعد.")
-
+    st.info("لا يوجد ملف مسجل حتى الآن، قم بإضافة أول بيان.")
