@@ -31,14 +31,14 @@ st.divider()
 # عرض محتوى ملف R.txt بالكامل (جميع المعرفات والبيانات المخزنة)
 st.subheader("سجل البيانات المحفوظة في الملف")
 if os.path.exists("R.txt"):
-    with open("R.txt", "r", encoding="utf-8") as f:
+    with open("السجل.txt", "r", encoding="utf-8") as f:
         data = f.read()
         if data.strip():
             st.text_area("جميع المدخلات السابقة", data, height=200)
             
             # زر لتحميل الملف بصيغة txt مباشرة من المتصفح
             st.download_button(
-                label="تحميل ملف البيانات (R.txt)",
+                label="تحميل ملف البيانات (السجل.txt)",
                 data=data,
                 file_name="R.txt",
                 mime="text/plain"
