@@ -38,7 +38,7 @@ if os.path.exists("R.txt"):
             
             # زر لتحميل الملف بصيغة txt مباشرة من المتصفح
             st.download_button(
-                label="تحميل ملف البيانات (السجل.txt)",
+                label="تحميل ملف البيانات (R.txt)",
                 data=data,
                 file_name="R.txt",
                 mime="text/plain"
