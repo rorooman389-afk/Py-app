@@ -5,7 +5,6 @@ import streamlit as st
 
 st.set_page_config(page_title="نظام السجل المدرسي", page_icon="🇴🇲", layout="centered")
 
-# تهيئة حالة الجلسة لإظهار البالونات بعد إعادة تحميل الصفحة
 if "show_balloons" not in st.session_state:
     st.session_state.show_balloons = False
 
@@ -13,7 +12,6 @@ if st.session_state.show_balloons:
     st.balloons()
     st.session_state.show_balloons = False
 
-# حقن أكواد CSS المتكاملة (تأثير الزجاج + إضاءة خلفية + إخفاء قوائم Streamlit)
 st.markdown(
     """
     <style>
@@ -24,7 +22,6 @@ st.markdown(
         to { opacity: 1; transform: translateY(0); }
     }
     
-    /* خلفية متدرجة مع أشكال ضوئية ناعمة لإبراز عمق الزجاج */
     html, body, [class*="css"], [data-testid="stAppViewContainer"] {
         font-family: 'Tajawal', sans-serif !important;
         direction: rtl;
@@ -38,7 +35,6 @@ st.markdown(
         animation: fadeIn 0.8s ease-in-out;
     }
 
-    /* إخفاء قوائم وتذييل Streamlit الافتراضية لهوية مستقلة */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     [data-testid="stHeader"] {
@@ -53,7 +49,6 @@ st.markdown(
         text-align: right;
     }
 
-    /* بطاقات الإحصائيات الزجاجية بألوان مميزة لكل عمود */
     [data-testid="stMetric"] {
         background: rgba(255, 255, 255, 0.58) !important;
         backdrop-filter: blur(16px) !important;
@@ -80,7 +75,6 @@ st.markdown(
         border-right: 5px solid #ef4444 !important;
     }
 
-    /* الترويسة الرسمية الزجاجية */
     .official-header {
         background: linear-gradient(135deg, rgba(13, 59, 102, 0.88) 0%, rgba(29, 99, 184, 0.84) 100%);
         backdrop-filter: blur(16px);
@@ -125,7 +119,6 @@ st.markdown(
         letter-spacing: 0.5px;
     }
 
-    /* شريط الوقت والتاريخ الزجاجي */
     [data-testid="stAlert"] {
         background: rgba(255, 255, 255, 0.58) !important;
         backdrop-filter: blur(14px) !important;
@@ -137,7 +130,6 @@ st.markdown(
         color: #0f172a !important;
     }
 
-    /* نموذج الإدخال الزجاجي */
     [data-testid="stForm"] {
         background: rgba(255, 255, 255, 0.6) !important;
         backdrop-filter: blur(16px) !important;
@@ -148,7 +140,6 @@ st.markdown(
         box-shadow: 0 8px 32px rgba(31, 38, 135, 0.07) !important;
     }
 
-    /* حقول الإدخال الزجاجية */
     .stTextInput input, .stSelectbox div[data-baseweb="select"] > div {
         background-color: rgba(255, 255, 255, 0.75) !important;
         backdrop-filter: blur(10px) !important;
@@ -162,7 +153,6 @@ st.markdown(
         box-shadow: 0 0 0 3px rgba(29, 99, 184, 0.15) !important;
     }
 
-    /* بطاقات السجلات الزجاجية الملونة */
     .glass-record-card {
         background: rgba(255, 255, 255, 0.6);
         backdrop-filter: blur(14px);
@@ -198,7 +188,6 @@ st.markdown(
         font-weight: 700;
     }
 
-    /* الأزرار الزجاجية اللامعة */
     .stButton > button, .stFormSubmitButton > button, .stDownloadButton > button {
         width: 100%;
         background: linear-gradient(135deg, rgba(13, 59, 102, 0.92) 0%, rgba(29, 99, 184, 0.92) 100%) !important;
@@ -226,7 +215,6 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# حساب الإحصائيات من الملف إن وجد
 violations_count = 0
 reinforcements_count = 0
 data = ""
@@ -242,7 +230,6 @@ if os.path.exists("R.txt"):
 
 total_records = violations_count + reinforcements_count
 
-# عرض الإحصائيات السريعة في 3 أعمدة ملونة
 col1, col2, col3 = st.columns(3)
 col1.metric(label="📊 إجمالي السجلات", value=total_records)
 col2.metric(label="🌟 التعزيزات", value=reinforcements_count)
@@ -250,14 +237,12 @@ col3.metric(label="⚠️ المخالفات", value=violations_count)
 
 st.write("")
 
-# جلب التاريخ والوقت الحالي بتوقيت سلطنة عمان
 now = datetime.now(ZoneInfo("Asia/Muscat"))
 current_date = now.strftime("%Y-%m-%d")
 current_time = now.strftime("%H:%M:%S")
 
 st.info(f"📅 التاريخ الحالي: {current_date} | ⏰ الساعة الحالية: {current_time}")
 
-# نموذج إدخال البيانات مقسم إلى أعمدة متجاورة
 with st.form("data_form", clear_on_submit=True):
     st.markdown("#### 📝 تسجيل بيان جديد")
     row1_col1, row1_col2 = st.columns(2)
@@ -276,3 +261,23 @@ with st.form("data_form", clear_on_submit=True):
 
 if submit_button:
     if id_val.strip() and details_val.strip() and class_val.strip():
+        entry = f"النوع: {type_val} | المعرف: {id_val} | التفاصيل: {details_val} | التاريخ: {current_date} | الساعة: {current_time} | الفصل: {class_val}\n"
+        with open("R.txt", "a", encoding="utf-8") as f:
+            f.write(entry)
+        st.session_state.show_balloons = True
+        st.rerun()
+    else:
+        st.warning("يرجى ملء جميع الحقول المطلوبة قبل الإضافة.")
+
+st.divider()
+
+st.subheader("سجل المخالفات والتعزيزات المحفوظة")
+
+if data.strip():
+    lines = [line.strip() for line in data.splitlines() if line.strip()]
+    for line in reversed(lines):
+        parts = [p.strip() for p in line.split("|")]
+        if len(parts) == 6:
+            p1, p2, p3, p4, p5, p6 = parts
+            r_type = p1.replace("النوع:", "").strip()
+            r_id = p2.replace("المعرف:", "").strip()
