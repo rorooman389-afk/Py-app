@@ -170,6 +170,7 @@ st.markdown(
     }
     .border-positive { border-right: 5px solid #10b981; }
     .border-negative { border-right: 5px solid #ef4444; }
+    .border-neutral { border-right: 5px solid #1d63b8; }
     
     .pill-positive {
         background: rgba(209, 250, 229, 0.85);
@@ -223,9 +224,9 @@ if os.path.exists("R.txt"):
     with open("R.txt", "r", encoding="utf-8") as f:
         data = f.read()
         for line in data.splitlines():
-            if line.startswith("النوع: مخالفة"):
+            if "النوع: مخالفة" in line:
                 violations_count += 1
-            elif line.startswith("النوع: تعزيز"):
+            elif "النوع: تعزيز" in line:
                 reinforcements_count += 1
 
 total_records = violations_count + reinforcements_count
@@ -261,7 +262,10 @@ with st.form("data_form", clear_on_submit=True):
 
 if submit_button:
     if id_val.strip() and details_val.strip() and class_val.strip():
-        entry = f"النوع: {type_val} | المعرف: {id_val} | التفاصيل: {details_val} | التاريخ: {current_date} | الساعة: {current_time} | الفصل: {class_val}\n"
+        clean_id = id_val.replace("|", "-").strip()
+        clean_details = details_val.replace("|", "-").strip()
+        clean_class = class_val.replace("|", "-").strip()
+        entry = f"النوع: {type_val} | المعرف: {clean_id} | التفاصيل: {clean_details} | التاريخ: {current_date} | الساعة: {current_time} | الفصل: {clean_class}\n"
         with open("R.txt", "a", encoding="utf-8") as f:
             f.write(entry)
         st.session_state.show_balloons = True
@@ -276,8 +280,3 @@ st.subheader("سجل المخالفات والتعزيزات المحفوظة")
 if data.strip():
     lines = [line.strip() for line in data.splitlines() if line.strip()]
     for line in reversed(lines):
-        parts = [p.strip() for p in line.split("|")]
-        if len(parts) == 6:
-            p1, p2, p3, p4, p5, p6 = parts
-            r_type = p1.replace("النوع:", "").strip()
-            r_id = p2.replace("المعرف:", "").strip()
