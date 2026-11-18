@@ -1,4 +1,3 @@
-
 import streamlit as st
 import os
 from datetime import datetime
@@ -10,41 +9,53 @@ st.markdown(
     body, [data-testid="stAppViewContainer"] {
         direction: rtl;
         text-align: right;
-        background-color: #f9f9f9;
+        background-color: #f8f9fa;
     }
     .stTextInput, .stSelectbox, .stTextArea, .stButton, .stDownloadButton {
         direction: rtl;
         text-align: right;
     }
-    /* تصميم ترويسة الشعار برمجياً */
-    .header-box {
-        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-        padding: 20px;
-        border-radius: 10px;
+    /* تصميم ترويسة الشعار والوزارة برمجياً بالكامل */
+    .official-header {
+        background: linear-gradient(135deg, #0d3b66 0%, #1d63b8 100%);
+        padding: 25px;
+        border-radius: 12px;
         text-align: center;
         color: white;
-        margin-bottom: 20px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        margin-bottom: 25px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        border-bottom: 4px solid #d4af37;
     }
-    .header-box h1 {
+    .official-header .emblem-badge {
+        font-size: 32px;
+        background: rgba(255, 255, 255, 0.15);
+        width: 65px;
+        height: 65px;
+        line-height: 65px;
+        border-radius: 50%;
+        margin: 0 auto 12px auto;
+        display: block;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    .official-header h1 {
         margin: 0;
-        font-size: 24px;
+        font-size: 22px;
         font-weight: bold;
+        color: #ffffff;
     }
-    .header-box p {
-        margin: 5px 0 0 0;
-        font-size: 16px;
-        color: #e0e0e0;
+    .official-header p {
+        margin: 8px 0 0 0;
+        font-size: 15px;
+        color: #f1f1f1;
+        letter-spacing: 0.5px;
     }
     </style>
     
-    <!-- ترويسة مصممة برمجياً بالكامل -->
-    <div class="header-box">
-        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom: 5px;">
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
-        </svg>
-        <h1>نظام سجل المخالفات والتعزيزات المدرسية</h1>
-        <p>سلطنة عمان - وزارة التربية والتعليم[span_0](start_span)[span_0](end_span)</p>
+    <!-- ترويسة رسمية مصممة برمجياً -->
+    <div class="official-header">
+        <span class="emblem-badge">🛡️</span>
+        <h1>سلطنة عمان - وزارة التربية والتعليم</h1>
+        <p>نظام سجل المخالفات والتعزيزات المدرسية</p>
     </div>
     """,
     unsafe_allow_html=True
@@ -111,6 +122,3 @@ if os.path.exists("R.txt"):
         st.info("الملف فارغ حالياً.")
 else:
     st.info("لا يوجد سجل مسجل حتى الآن، قم بإضافة أول بيان.")
-
-
-
