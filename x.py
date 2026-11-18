@@ -53,7 +53,7 @@ st.markdown(
     
     <!-- ترويسة رسمية مصممة برمجياً -->
     <div class="official-header">
-        <span class="emblem-badge">🛡️</span>
+        <span class="emblem-badge">🇴🇲</span>
         <h1>سلطنة عمان - وزارة التربية والتعليم</h1>
         <p>نظام سجل المخالفات والتعزيزات المدرسية</p>
     </div>
