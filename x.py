@@ -1,6 +1,5 @@
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 import os
-from zoneinfo import ZoneInfo
 import streamlit as st
 
 st.set_page_config(page_title="نظام السجل المدرسي", page_icon="🇴🇲", layout="centered")
@@ -15,7 +14,7 @@ if st.session_state.show_balloons:
 st.markdown(
     """
     <style>
-    @import url('https://googleapis.com');
+    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
 
     @keyframes fadeIn {
         from { opacity: 0; transform: translateY(-10px); }
@@ -91,3 +90,28 @@ st.markdown(
         display: block;
         border: 1.5px solid rgba(212, 175, 55, 0.65);
         box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        transition: transform 0.3s ease;
+    }
+    .official-header .emblem-badge:hover {transform: scale(1.1) rotate(5deg);}
+    .official-header h1 {margin: 0; font-size: 22px; font-weight: 800; color: #ffffff;}
+    .official-header p {margin: 8px 0 0 0; font-size: 15px; color: #f1f1f1; letter-spacing: 0.5px;}
+
+    [data-testid="stAlert"] {
+        background: rgba(255, 255, 255, 0.58) !important;
+        backdrop-filter: blur(14px) !important;
+        -webkit-backdrop-filter: blur(14px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.78) !important;
+        border-right: 5px solid #1d63b8 !important;
+        border-radius: 14px !important;
+        box-shadow: 0 6px 20px rgba(31, 38, 135, 0.05) !important;
+        color: #0f172a !important;
+    }
+
+    [data-testid="stForm"] {
+        background: rgba(255, 255, 255, 0.6) !important;
+        backdrop-filter: blur(16px) !important;
+        -webkit-backdrop-filter: blur(16px) !important;
+        padding: 25px !important;
+        border-radius: 18px !important;
+        border: 1px solid rgba(255, 255, 255, 0.85) !important;
+        box-shadow: 0 8px 32px rgba(
