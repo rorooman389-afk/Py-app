@@ -175,29 +175,41 @@ if lines:
     render_card(line)
 
   st.markdown("")
-  with st.expander("🗑️ إدارة وحذف السجلات"):
-    selected_to_delete = st.selectbox(
-        "اختر السجل المراد حذفه:",
-        options=lines,
-        format_func=lambda x: x[:70] + "..." if len(x) > 70 else x,
+  with st.expander("🔒 إدارة وحذف السجلات (محمية بكلمة مرور)"):
+    entered_pin = st.text_input(
+        "أدخل رمز الحماية (PIN):", type="password", key="admin_pin_input"
     )
 
-    col_d1, col_d2 = st.columns(2)
-    with col_d1:
-      if st.button("حذف السجل المحدد", type="primary", use_container_width=True):
-        updated_lines = [l for l in lines if l != selected_to_delete]
-        with open("R.txt", "w", encoding="utf-8") as f:
-          f.write("\n".join(updated_lines) + ("\n" if updated_lines else ""))
-        st.success("تم حذف السجل المحدد بنجاح!")
-        st.rerun()
+    if entered_pin == "2013":
+      st.success("✅ تم فتح لوحة التحكم بنجاح!")
+      selected_to_delete = st.selectbox(
+          "اختر السجل المراد حذفه:",
+          options=lines,
+          format_func=lambda x: x[:70] + "..." if len(x) > 70 else x,
+      )
 
-    with col_d2:
-      if st.button(
-          "حذف ملف السجلات بالكامل", type="secondary", use_container_width=True
-      ):
-        if os.path.exists("R.txt"):
-          os.remove("R.txt")
-          st.success("تم حذف ملف السجلات بالكامل!")
+      col_d1, col_d2 = st.columns(2)
+      with col_d1:
+        if st.button(
+            "حذف السجل المحدد", type="primary", use_container_width=True
+        ):
+          updated_lines = [l for l in lines if l != selected_to_delete]
+          with open("R.txt", "w", encoding="utf-8") as f:
+            f.write("\n".join(updated_lines) + ("\n" if updated_lines else ""))
+          st.success("تم حذف السجل المحدد بنجاح!")
           st.rerun()
+
+      with col_d2:
+        if st.button(
+            "حذف ملف السجلات بالكامل",
+            type="secondary",
+            use_container_width=True,
+        ):
+          if os.path.exists("R.txt"):
+            os.remove("R.txt")
+            st.success("تم حذف ملف السجلات بالكامل!")
+            st.rerun()
+    elif entered_pin:
+      st.error("❌ الرمز المدخل غير صحيح. يرجى المحاولة مجدداً.")
 else:
   st.info("لا توجد سجلات مسجلة حتى الآن.")
