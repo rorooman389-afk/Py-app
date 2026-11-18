@@ -37,12 +37,8 @@ st.markdown(
 
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
-    [data-testid="stHeader"] {
-        background: transparent !important;
-    }
-    [data-testid="stToolbar"] {
-        display: none !important;
-    }
+    [data-testid="stHeader"] {background: transparent !important;}
+    [data-testid="stToolbar"] {display: none !important;}
 
     .stTextInput, .stSelectbox, .stTextArea, .stButton, .stDownloadButton {
         direction: rtl;
@@ -65,15 +61,9 @@ st.markdown(
         background: rgba(255, 255, 255, 0.8) !important;
         box-shadow: 0 12px 28px rgba(31, 38, 135, 0.12) !important;
     }
-    [data-testid="column"]:nth-of-type(1) [data-testid="stMetric"] {
-        border-right: 5px solid #1d63b8 !important;
-    }
-    [data-testid="column"]:nth-of-type(2) [data-testid="stMetric"] {
-        border-right: 5px solid #10b981 !important;
-    }
-    [data-testid="column"]:nth-of-type(3) [data-testid="stMetric"] {
-        border-right: 5px solid #ef4444 !important;
-    }
+    [data-testid="column"]:nth-of-type(1) [data-testid="stMetric"] {border-right: 5px solid #1d63b8 !important;}
+    [data-testid="column"]:nth-of-type(2) [data-testid="stMetric"] {border-right: 5px solid #10b981 !important;}
+    [data-testid="column"]:nth-of-type(3) [data-testid="stMetric"] {border-right: 5px solid #ef4444 !important;}
 
     .official-header {
         background: linear-gradient(135deg, rgba(13, 59, 102, 0.88) 0%, rgba(29, 99, 184, 0.84) 100%);
@@ -103,21 +93,9 @@ st.markdown(
         box-shadow: 0 4px 10px rgba(0,0,0,0.15);
         transition: transform 0.3s ease;
     }
-    .official-header .emblem-badge:hover {
-        transform: scale(1.1) rotate(5deg);
-    }
-    .official-header h1 {
-        margin: 0;
-        font-size: 22px;
-        font-weight: 800;
-        color: #ffffff;
-    }
-    .official-header p {
-        margin: 8px 0 0 0;
-        font-size: 15px;
-        color: #f1f1f1;
-        letter-spacing: 0.5px;
-    }
+    .official-header .emblem-badge:hover {transform: scale(1.1) rotate(5deg);}
+    .official-header h1 {margin: 0; font-size: 22px; font-weight: 800; color: #ffffff;}
+    .official-header p {margin: 8px 0 0 0; font-size: 15px; color: #f1f1f1; letter-spacing: 0.5px;}
 
     [data-testid="stAlert"] {
         background: rgba(255, 255, 255, 0.58) !important;
@@ -164,13 +142,10 @@ st.markdown(
         box-shadow: 0 6px 18px rgba(31, 38, 135, 0.05);
         transition: transform 0.25s ease, background 0.25s ease;
     }
-    .glass-record-card:hover {
-        transform: translateX(-5px);
-        background: rgba(255, 255, 255, 0.82);
-    }
-    .border-positive { border-right: 5px solid #10b981; }
-    .border-negative { border-right: 5px solid #ef4444; }
-    .border-neutral { border-right: 5px solid #1d63b8; }
+    .glass-record-card:hover {transform: translateX(-5px); background: rgba(255, 255, 255, 0.82);}
+    .border-positive {border-right: 5px solid #10b981;}
+    .border-negative {border-right: 5px solid #ef4444;}
+    .border-neutral {border-right: 5px solid #1d63b8;}
     
     .pill-positive {
         background: rgba(209, 250, 229, 0.85);
@@ -216,6 +191,43 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+
+def render_card(line_text):
+    parts = [p.strip() for p in line_text.split("|")]
+    if len(parts) == 6:
+        p1, p2, p3, p4, p5, p6 = parts
+        r_type = p1.replace("النوع:", "").strip()
+        r_id = p2.replace("المعرف:", "").strip()
+        r_details = p3.replace("التفاصيل:", "").strip()
+        r_date = p4.replace("التاريخ:", "").strip()
+        r_time = p5.replace("الساعة:", "").strip()
+        r_class = p6.replace("الفصل:", "").strip()
+
+        is_pos = r_type == "تعزيز"
+        b_cls = "border-positive" if is_pos else "border-negative"
+        p_cls = "pill-positive" if is_pos else "pill-negative"
+        icon = "🌟" if is_pos else "⚠️"
+
+        html = f"""
+        <div class="glass-record-card {b_cls}">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span class="{p_cls}">{icon} {r_type}</span>
+                <span style="color: #475569; font-size: 13px;">📅 {r_date} | ⏰ {r_time}</span>
+            </div>
+            <div style="font-size: 16px; font-weight: 700; color: #0f172a; margin-bottom: 4px;">
+                معرف الطالب: {r_id} &nbsp;•&nbsp; الفصل: {r_class}
+            </div>
+            <div style="color: #334155; font-size: 15px;">{r_details}</div>
+        </div>
+        """
+        st.markdown(html, unsafe_allow_html=True)
+    else:
+        st.markdown(
+            f'<div class="glass-record-card border-neutral">{line_text}</div>',
+            unsafe_allow_html=True,
+        )
+
+
 violations_count = 0
 reinforcements_count = 0
 data = ""
@@ -223,11 +235,11 @@ data = ""
 if os.path.exists("R.txt"):
     with open("R.txt", "r", encoding="utf-8") as f:
         data = f.read()
-        for line in data.splitlines():
-            if "النوع: مخالفة" in line:
-                violations_count += 1
-            elif "النوع: تعزيز" in line:
-                reinforcements_count += 1
+    for line in data.splitlines():
+        if "النوع: مخالفة" in line:
+            violations_count += 1
+        elif "النوع: تعزيز" in line:
+            reinforcements_count += 1
 
 total_records = violations_count + reinforcements_count
 
@@ -246,37 +258,3 @@ st.info(f"📅 التاريخ الحالي: {current_date} | ⏰ الساعة ا
 
 with st.form("data_form", clear_on_submit=True):
     st.markdown("#### 📝 تسجيل بيان جديد")
-    row1_col1, row1_col2 = st.columns(2)
-    with row1_col1:
-        id_val = st.text_input("معرف الطالب (ID)")
-    with row1_col2:
-        class_val = st.text_input("الفصل (Class)")
-
-    row2_col1, row2_col2 = st.columns(2)
-    with row2_col1:
-        type_val = st.selectbox("نوع السجل", ["مخالفة", "تعزيز"])
-    with row2_col2:
-        details_val = st.text_input("التفاصيل (سبب المخالفة أو نوع التعزيز)")
-
-    submit_button = st.form_submit_button(label="إضافة وحفظ")
-
-if submit_button:
-    if id_val.strip() and details_val.strip() and class_val.strip():
-        clean_id = id_val.replace("|", "-").strip()
-        clean_details = details_val.replace("|", "-").strip()
-        clean_class = class_val.replace("|", "-").strip()
-        entry = f"النوع: {type_val} | المعرف: {clean_id} | التفاصيل: {clean_details} | التاريخ: {current_date} | الساعة: {current_time} | الفصل: {clean_class}\n"
-        with open("R.txt", "a", encoding="utf-8") as f:
-            f.write(entry)
-        st.session_state.show_balloons = True
-        st.rerun()
-    else:
-        st.warning("يرجى ملء جميع الحقول المطلوبة قبل الإضافة.")
-
-st.divider()
-
-st.subheader("سجل المخالفات والتعزيزات المحفوظة")
-
-if data.strip():
-    lines = [line.strip() for line in data.splitlines() if line.strip()]
-    for line in reversed(lines):
