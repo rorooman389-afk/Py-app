@@ -2,7 +2,7 @@ import streamlit as st
 import os
 from datetime import datetime
 
-# إعداد الصفحة لتكون المحاذاة من اليمين ليسار (RTL) ودعم اللغة العربية
+# إعداد الصفحة لتكون المحاذاة من اليمين ليسار ودعم اللغة العربية
 st.markdown(
     """
     <style>
@@ -88,4 +88,5 @@ if os.path.exists("R.txt"):
         st.info("الملف فارغ حالياً.")
 else:
     st.info("لا يوجد سجل مسجل حتى الآن، قم بإضافة أول بيان.")
+
 
