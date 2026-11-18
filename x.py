@@ -1,7 +1,7 @@
-from datetime import datetime
-import os
-from zoneinfo import ZoneInfo
 import streamlit as st
+import os
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 st.set_page_config(page_title="نظام السجل المدرسي", page_icon="🇴🇲", layout="centered")
 
@@ -70,7 +70,6 @@ st.markdown(
         background: rgba(255, 255, 255, 0.8) !important;
         box-shadow: 0 12px 28px rgba(31, 38, 135, 0.12) !important;
     }
-    /* تلوين حدود بطاقات الإحصائيات الثلاث */
     [data-testid="column"]:nth-of-type(1) [data-testid="stMetric"] {
         border-right: 5px solid #1d63b8 !important;
     }
@@ -224,7 +223,7 @@ st.markdown(
         <p>نظام سجل المخالفات والتعزيزات المدرسية</p>
     </div>
     """,
-    unsafe_allow_html=True,
+    unsafe_allow_html=True
 )
 
 # حساب الإحصائيات من الملف إن وجد
@@ -266,13 +265,13 @@ with st.form("data_form", clear_on_submit=True):
         id_val = st.text_input("معرف الطالب (ID)")
     with row1_col2:
         class_val = st.text_input("الفصل (Class)")
-
+        
     row2_col1, row2_col2 = st.columns(2)
     with row2_col1:
         type_val = st.selectbox("نوع السجل", ["مخالفة", "تعزيز"])
     with row2_col2:
         details_val = st.text_input("التفاصيل (سبب المخالفة أو نوع التعزيز)")
-
+    
     submit_button = st.form_submit_button(label="إضافة وحفظ")
 
 if submit_button:
