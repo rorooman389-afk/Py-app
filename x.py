@@ -114,4 +114,100 @@ st.markdown(
         padding: 25px !important;
         border-radius: 18px !important;
         border: 1px solid rgba(255, 255, 255, 0.85) !important;
-        box-shadow: 0 8px 32px rgba(
+        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.07) !important;
+    }
+
+    .stTextInput input, .stSelectbox div[data-baseweb="select"] > div {
+        background-color: rgba(255, 255, 255, 0.75) !important;
+        backdrop-filter: blur(10px) !important;
+        border-radius: 12px !important;
+        border: 1px solid rgba(255, 255, 255, 0.9) !important;
+        transition: all 0.3s ease;
+    }
+    .stTextInput input:focus {
+        background-color: rgba(255, 255, 255, 0.96) !important;
+        border-color: #1d63b8 !important;
+        box-shadow: 0 0 0 3px rgba(29, 99, 184, 0.15) !important;
+    }
+
+    .glass-record-card {
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        padding: 15px 20px;
+        border-radius: 15px;
+        margin-bottom: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 6px 18px rgba(31, 38, 135, 0.05);
+        transition: transform 0.25s ease, background 0.25s ease;
+    }
+    .glass-record-card:hover {transform: translateX(-5px); background: rgba(255, 255, 255, 0.82);}
+    .border-positive {border-right: 5px solid #10b981;}
+    .border-negative {border-right: 5px solid #ef4444;}
+    .border-neutral {border-right: 5px solid #1d63b8;}
+    
+    .pill-positive {
+        background: rgba(209, 250, 229, 0.85);
+        color: #065f46;
+        padding: 3px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 700;
+    }
+    .pill-negative {
+        background: rgba(254, 226, 226, 0.85);
+        color: #991b1b;
+        padding: 3px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .stButton > button, .stFormSubmitButton > button, .stDownloadButton > button {
+        width: 100%;
+        background: linear-gradient(135deg, rgba(13, 59, 102, 0.92) 0%, rgba(29, 99, 184, 0.92) 100%) !important;
+        backdrop-filter: blur(8px) !important;
+        color: white !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        border-radius: 12px !important;
+        padding: 11px 22px !important;
+        font-weight: 700 !important;
+        box-shadow: 0 6px 18px rgba(29, 99, 184, 0.25) !important;
+        transition: all 0.3s ease !important;
+    }
+    .stButton > button:hover, .stFormSubmitButton > button:hover, .stDownloadButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(29, 99, 184, 0.38) !important;
+    }
+    </style>
+    
+    <div class="official-header">
+        <span class="emblem-badge">🇴🇲</span>
+        <h1>سلطنة عمان - وزارة التربية والتعليم</h1>
+        <p>نظام سجل المخالفات والتعزيزات المدرسية</p>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+
+def render_card(line_text):
+    parts = [p.strip() for p in line_text.split("|")]
+    if len(parts) == 6:
+        p1, p2, p3, p4, p5, p6 = parts
+        r_type = p1.replace("النوع:", "").strip()
+        r_id = p2.replace("المعرف:", "").strip()
+        r_details = p3.replace("التفاصيل:", "").strip()
+        r_date = p4.replace("التاريخ:", "").strip()
+        r_time = p5.replace("الساعة:", "").strip()
+        r_class = p6.replace("الفصل:", "").strip()
+
+        is_pos = r_type == "تعزيز"
+        b_cls = "border-positive" if is_pos else "border-negative"
+        p_cls = "pill-positive" if is_pos else "pill-negative"
+        icon = "🌟" if is_pos else "⚠️"
+
+        html = f"""
+        <div class="glass-record-card {b_cls}">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span class="{p
