@@ -1,7 +1,7 @@
-import streamlit as st
-import os
 from datetime import datetime
+import os
 from zoneinfo import ZoneInfo
+import streamlit as st
 
 st.set_page_config(page_title="نظام السجل المدرسي", page_icon="🇴🇲", layout="centered")
 
@@ -24,7 +24,7 @@ st.markdown(
         to { opacity: 1; transform: translateY(0); }
     }
     
-    /* 1. خلفية متدرجة مع أشكال ضوئية ناعمة لإبراز عمق الزجاج */
+    /* خلفية متدرجة مع أشكال ضوئية ناعمة لإبراز عمق الزجاج */
     html, body, [class*="css"], [data-testid="stAppViewContainer"] {
         font-family: 'Tajawal', sans-serif !important;
         direction: rtl;
@@ -38,7 +38,7 @@ st.markdown(
         animation: fadeIn 0.8s ease-in-out;
     }
 
-    /* 5. إخفاء قوائم وتذييل Streamlit الافتراضية لهوية مستقلة */
+    /* إخفاء قوائم وتذييل Streamlit الافتراضية لهوية مستقلة */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     [data-testid="stHeader"] {
@@ -53,7 +53,7 @@ st.markdown(
         text-align: right;
     }
 
-    /* 2. بطاقات الإحصائيات الزجاجية بألوان مميزة لكل عمود */
+    /* بطاقات الإحصائيات الزجاجية بألوان مميزة لكل عمود */
     [data-testid="stMetric"] {
         background: rgba(255, 255, 255, 0.58) !important;
         backdrop-filter: blur(16px) !important;
@@ -162,7 +162,7 @@ st.markdown(
         box-shadow: 0 0 0 3px rgba(29, 99, 184, 0.15) !important;
     }
 
-    /* 3. بطاقات السجلات الزجاجية الملونة */
+    /* بطاقات السجلات الزجاجية الملونة */
     .glass-record-card {
         background: rgba(255, 255, 255, 0.6);
         backdrop-filter: blur(14px);
@@ -223,7 +223,7 @@ st.markdown(
         <p>نظام سجل المخالفات والتعزيزات المدرسية</p>
     </div>
     """,
-    unsafe_allow_html=True
+    unsafe_allow_html=True,
 )
 
 # حساب الإحصائيات من الملف إن وجد
@@ -265,13 +265,13 @@ with st.form("data_form", clear_on_submit=True):
         id_val = st.text_input("معرف الطالب (ID)")
     with row1_col2:
         class_val = st.text_input("الفصل (Class)")
-        
+
     row2_col1, row2_col2 = st.columns(2)
     with row2_col1:
         type_val = st.selectbox("نوع السجل", ["مخالفة", "تعزيز"])
     with row2_col2:
         details_val = st.text_input("التفاصيل (سبب المخالفة أو نوع التعزيز)")
-    
+
     submit_button = st.form_submit_button(label="إضافة وحفظ")
 
 if submit_button:
