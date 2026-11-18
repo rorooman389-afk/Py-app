@@ -1,4 +1,4 @@
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta, timezone
 import os
 import streamlit as st
 
@@ -12,40 +12,30 @@ if st.session_state.show_balloons:
     st.session_state.show_balloons = False
 
 st.markdown(
-    "<style>"
-    "@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');"
-    "html, body, [class*='css'], [data-testid='stAppViewContainer'] {"
-    "font-family: 'Tajawal', sans-serif !important;"
-    "direction: rtl; text-align: right; background-color: #e8f0fe !important;"
-    "}"
-    "#MainMenu, footer {visibility: hidden;}"
-    "[data-testid='stHeader'] {background: transparent !important;}"
-    ".official-header {"
-    "background: linear-gradient(135deg, #0d3b66 0%, #1d63b8 100%);"
-    "padding: 25px; border-radius: 18px; text-align: center; color: white;"
-    "margin-bottom: 22px; border-bottom: 4px solid #d4af37;"
-    "}"
-    ".official-header .emblem-badge {"
-    "font-size: 32px; background: rgba(255, 255, 255, 0.15);"
-    "width: 68px; height: 68px; line-height: 68px; border-radius: 50%;"
-    "margin: 0 auto 12px auto; display: block;"
-    "border: 1.5px solid rgba(212, 175, 55, 0.65);"
-    "}"
-    ".glass-record-card {"
-    "background: rgba(255, 255, 255, 0.8); padding: 15px 20px;"
-    "border-radius: 15px; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);"
-    "}"
-    ".border-positive {border-right: 5px solid #10b981;}"
-    ".border-negative {border-right: 5px solid #ef4444;}"
-    ".border-neutral {border-right: 5px solid #1d63b8;}"
-    ".pill-positive {background: #d1fae5; color: #065f46; padding: 3px 12px; border-radius: 20px; font-size: 13px; font-weight: 700;}"
-    ".pill-negative {background: #fee2e2; color: #991b1b; padding: 3px 12px; border-radius: 20px; font-size: 13px; font-weight: 700;}"
-    "</style>"
-    "<div class='official-header'>"
-    "<span class='emblem-badge'>🇴🇲</span>"
-    "<h1>سلطنة عمان - وزارة التربية والتعليم</h1>"
-    "<p>نظام سجل المخالفات والتعزيزات المدرسية</p>"
-    "</div>",
+    "<style>@import"
+    " url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');html,"
+    " body, [class*='css'], [data-testid='stAppViewContainer'] {font-family:"
+    " 'Tajawal', sans-serif !important;direction: rtl; text-align: right;"
+    " background-color: #e8f0fe !important;}#MainMenu, footer {visibility:"
+    " hidden;}[data-testid='stHeader'] {background: transparent"
+    " !important;}.official-header {background: linear-gradient(135deg, #0d3b66"
+    " 0%, #1d63b8 100%);padding: 25px; border-radius: 18px; text-align:"
+    " center; color: white;margin-bottom: 22px; border-bottom: 4px solid"
+    " #d4af37;}.official-header .emblem-badge {font-size: 32px; background:"
+    " rgba(255, 255, 255, 0.15);width: 68px; height: 68px; line-height: 68px;"
+    " border-radius: 50%;margin: 0 auto 12px auto; display: block;border: 1.5px"
+    " solid rgba(212, 175, 55, 0.65);}.glass-record-card {background: rgba(255,"
+    " 255, 255, 0.8); padding: 15px 20px;border-radius: 15px; margin-bottom:"
+    " 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);}.border-positive"
+    " {border-right: 5px solid #10b981;}.border-negative {border-right: 5px"
+    " solid #ef4444;}.border-neutral {border-right: 5px solid"
+    " #1d63b8;}.pill-positive {background: #d1fae5; color: #065f46; padding:"
+    " 3px 12px; border-radius: 20px; font-size: 13px; font-weight:"
+    " 700;}.pill-negative {background: #fee2e2; color: #991b1b; padding: 3px"
+    " 12px; border-radius: 20px; font-size: 13px; font-weight: 700;}</style><div"
+    " class='official-header'><span class='emblem-badge'>🇴🇲</span><h1>سلطنة"
+    " عمان - وزارة التربية والتعليم</h1><p>نظام سجل المخالفات والتعزيزات"
+    " المدرسية</p></div>",
     unsafe_allow_html=True,
 )
 
@@ -144,4 +134,42 @@ st.info(f"📅 التاريخ الحالي: {current_date} | ⏰ الساعة ا
 with st.form("data_form", clear_on_submit=True):
     st.markdown("#### 📝 تسجيل بيان جديد")
 
-    col_f1,
+    col_f1, col_f2, col_f3 = st.columns(3)
+    with col_f1:
+        record_type = st.selectbox("نوع السجل", ["تعزيز", "مخالفة"])
+    with col_f2:
+        student_id = st.text_input("معرف / اسم الطالب")
+    with col_f3:
+        student_class = st.text_input("الفصل الدراسي (مثال: 10/2)")
+
+    details = st.text_area("التفاصيل والملاحظات")
+    submitted = st.form_submit_button(
+        "💾 حفظ السجل", use_container_width=True
+    )
+
+    if submitted:
+        if student_id.strip() and student_class.strip() and details.strip():
+            # تنسيق السطر ليتطابق مع دالة render_card
+            clean_details = details.replace("\n", " ").strip()
+            new_entry = f"النوع: {record_type} | المعرف: {student_id.strip()} | التفاصيل: {clean_details} | التاريخ: {current_date} | الساعة: {current_time} | الفصل: {student_class.strip()}\n"
+
+            with open("R.txt", "a", encoding="utf-8") as f:
+                f.write(new_entry)
+
+            if record_type == "تعزيز":
+                st.session_state.show_balloons = True
+
+            st.rerun()
+        else:
+            st.warning("⚠️ يرجى تعبئة جميع الحقول قبل الحفظ.")
+
+st.markdown("---")
+st.markdown("#### 📋 السجلات المسجلة")
+
+# عرض السجلات من الأحدث إلى الأقدم
+lines = [line for line in data.splitlines() if line.strip()]
+if lines:
+    for line in reversed(lines):
+        render_card(line)
+else:
+    st.info("لا توجد سجلات مسجلة حتى الآن.")
