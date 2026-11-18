@@ -181,13 +181,23 @@ if lines:
         options=lines,
         format_func=lambda x: x[:70] + "..." if len(x) > 70 else x,
     )
-    if st.button(
-        "حذف السجل المحدد نهائياً", type="primary", use_container_width=True
-    ):
-      updated_lines = [l for l in lines if l != selected_to_delete]
-      with open("R.txt", "w", encoding="utf-8") as f:
-        f.write("\n".join(updated_lines) + ("\n" if updated_lines else ""))
-      st.success("تم حذف السجل بنجاح!")
-      st.rerun()
+
+    col_d1, col_d2 = st.columns(2)
+    with col_d1:
+      if st.button("حذف السجل المحدد", type="primary", use_container_width=True):
+        updated_lines = [l for l in lines if l != selected_to_delete]
+        with open("R.txt", "w", encoding="utf-8") as f:
+          f.write("\n".join(updated_lines) + ("\n" if updated_lines else ""))
+        st.success("تم حذف السجل المحدد بنجاح!")
+        st.rerun()
+
+    with col_d2:
+      if st.button(
+          "حذف ملف السجلات بالكامل", type="secondary", use_container_width=True
+      ):
+        if os.path.exists("R.txt"):
+          os.remove("R.txt")
+          st.success("تم حذف ملف السجلات بالكامل!")
+          st.rerun()
 else:
   st.info("لا توجد سجلات مسجلة حتى الآن.")
