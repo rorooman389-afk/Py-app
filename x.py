@@ -11,7 +11,6 @@ if st.session_state.show_balloons:
     st.balloons()
     st.session_state.show_balloons = False
 
-# تطبيق التصميم بدون استخدام علامات تنصيص ثلاثية لتفادي أخطاء النسخ
 st.markdown(
     "<style>"
     "@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');"
@@ -68,9 +67,81 @@ def render_card(line_text):
             icon = "🌟" if is_pos else "⚠️"
 
             card_html = (
-                f"<div class='glass-record-card {b_cls}'>"
-                f"<div style='display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;'>"
-                f"<span class='{p_cls}'>{icon} {r_type}</span>"
-                f"<span style='color: #475569; font-size: 13px;'>📅 {r_date} | ⏰ {r_time}</span>"
-                f"</div>"
-                f"<div style='font-size: 16px; font-weight: 700; color: #0f1
+                "<div class='glass-record-card "
+                + b_cls
+                + "'>"
+                "<div style='display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;'>"
+                "<span class='"
+                + p_cls
+                + "'>"
+                + icon
+                + " "
+                + r_type
+                + "</span>"
+                "<span style='color: #475569; font-size: 13px;'>📅 "
+                + r_date
+                + " | ⏰ "
+                + r_time
+                + "</span>"
+                "</div>"
+                "<div style='font-size: 16px; font-weight: 700; color: #0f172a; margin-bottom: 4px;'>"
+                "معرف الطالب: "
+                + r_id
+                + " &nbsp;•&nbsp; الفصل: "
+                + r_class
+                + "</div>"
+                "<div style='color: #334155; font-size: 15px;'>"
+                + r_details
+                + "</div>"
+                "</div>"
+            )
+            st.markdown(card_html, unsafe_allow_html=True)
+        else:
+            st.markdown(
+                "<div class='glass-record-card border-neutral'>"
+                + line_text
+                + "</div>",
+                unsafe_allow_html=True,
+            )
+    except Exception:
+        st.markdown(
+            "<div class='glass-record-card border-neutral'>"
+            + line_text
+            + "</div>",
+            unsafe_allow_html=True,
+        )
+
+
+violations_count = 0
+reinforcements_count = 0
+data = ""
+
+if os.path.exists("R.txt"):
+    with open("R.txt", "r", encoding="utf-8") as f:
+        data = f.read()
+    for line in data.splitlines():
+        if "النوع: مخالفة" in line:
+            violations_count += 1
+        elif "النوع: تعزيز" in line:
+            reinforcements_count += 1
+
+total_records = violations_count + reinforcements_count
+
+col1, col2, col3 = st.columns(3)
+col1.metric(label="📊 إجمالي السجلات", value=total_records)
+col2.metric(label="🌟 التعزيزات", value=reinforcements_count)
+col3.metric(label="⚠️ المخالفات", value=violations_count)
+
+st.write("")
+
+oman_tz = timezone(timedelta(hours=4))
+now = datetime.now(oman_tz)
+current_date = now.strftime("%Y-%m-%d")
+current_time = now.strftime("%H:%M:%S")
+
+st.info(f"📅 التاريخ الحالي: {current_date} | ⏰ الساعة الحالية: {current_time}")
+
+with st.form("data_form", clear_on_submit=True):
+    st.markdown("#### 📝 تسجيل بيان جديد")
+
+    col_f1,
