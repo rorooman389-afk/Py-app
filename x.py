@@ -1,109 +1,123 @@
 from datetime import datetime
 import os
-import time
+from zoneinfo import ZoneInfo
 import streamlit as st
 
-# إعدادات الصفحة الأساسية
-st.set_page_config(
-    page_title="نظام السجل المدرسي - سلطنة عمان", page_icon="🇴🇲", layout="centered"
-)
+st.set_page_config(page_title="نظام السجل المدرسي", page_icon="🇴🇲", layout="centered")
 
-# حقن أكواد CSS بتأثير الزجاج الكامل (Glassmorphism)
+# تهيئة حالة الجلسة لإظهار البالونات بعد إعادة تحميل الصفحة
+if "show_balloons" not in st.session_state:
+    st.session_state.show_balloons = False
+
+if st.session_state.show_balloons:
+    st.balloons()
+    st.session_state.show_balloons = False
+
+# تصميم الواجهة بتأثير الزجاج (Glassmorphism) ودعم اللغة العربية
 st.markdown(
     """
     <style>
     @import url('https://googleapis.com');
 
-    /* تطبيق الخط العربي واتجاه الصفحة وخلفية متدرجة لإبراز الزجاج */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* تطبيق الخط وخلفية متدرجة لإبراز تأثير الزجاج */
     html, body, [class*="css"], [data-testid="stAppViewContainer"] {
         font-family: 'Tajawal', sans-serif !important;
         direction: rtl;
         text-align: right;
-        background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 45%, #e0e7ff 100%) !important;
+        background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 50%, #e0e7ff 100%) !important;
         background-attachment: fixed !important;
+        animation: fadeIn 0.8s ease-in-out;
     }
 
-    /* إخفاء خلفية الهيدر الافتراضية لستريمليت */
+    /* إخفاء شريط الهيدر العلوي الافتراضي */
     [data-testid="stHeader"] {
         background: transparent !important;
     }
 
-    /* حركات الأنيميشن */
-    @keyframes slideDown {
-        from { opacity: 0; transform: translateY(-25px); }
-        to { opacity: 1; transform: translateY(0); }
+    .stTextInput, .stSelectbox, .stTextArea, .stButton, .stDownloadButton {
+        direction: rtl;
+        text-align: right;
     }
-    @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
+
+    /* بطاقات الإحصائيات الزجاجية */
+    [data-testid="stMetric"] {
+        background: rgba(255, 255, 255, 0.55) !important;
+        backdrop-filter: blur(14px) !important;
+        -webkit-backdrop-filter: blur(14px) !important;
+        padding: 16px !important;
+        border-radius: 16px !important;
+        border: 1px solid rgba(255, 255, 255, 0.75) !important;
+        border-right: 5px solid #1d63b8 !important;
+        box-shadow: 0 8px 24px rgba(31, 38, 135, 0.06) !important;
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-    @keyframes pulseGlow {
-        0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.5); }
-        70% { box-shadow: 0 0 0 12px rgba(212, 175, 55, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+    [data-testid="stMetric"]:hover {
+        transform: translateY(-4px);
+        background: rgba(255, 255, 255, 0.75) !important;
+        box-shadow: 0 12px 28px rgba(31, 38, 135, 0.12) !important;
     }
 
     /* الترويسة الرسمية الزجاجية */
     .official-header {
-        background: linear-gradient(135deg, rgba(10, 37, 64, 0.88) 0%, rgba(29, 99, 184, 0.82) 100%);
+        background: linear-gradient(135deg, rgba(13, 59, 102, 0.88) 0%, rgba(29, 99, 184, 0.84) 100%);
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
-        padding: 30px 20px;
-        border-radius: 20px;
+        padding: 25px;
+        border-radius: 18px;
         text-align: center;
         color: white;
         margin-bottom: 25px;
-        box-shadow: 0 8px 32px rgba(10, 37, 64, 0.18);
+        box-shadow: 0 8px 32px rgba(10, 37, 64, 0.16);
         border: 1px solid rgba(255, 255, 255, 0.25);
         border-bottom: 4px solid #d4af37;
-        animation: slideDown 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+        animation: fadeIn 1s ease-in-out;
     }
     .official-header .emblem-badge {
-        font-size: 36px;
+        font-size: 32px;
         background: rgba(255, 255, 255, 0.15);
         backdrop-filter: blur(8px);
-        width: 75px;
-        height: 75px;
-        line-height: 75px;
+        width: 68px;
+        height: 68px;
+        line-height: 68px;
         border-radius: 50%;
-        margin: 0 auto 15px auto;
+        margin: 0 auto 12px auto;
         display: block;
-        border: 1.5px solid rgba(212, 175, 55, 0.7);
-        animation: pulseGlow 2.5s infinite;
+        border: 1.5px solid rgba(212, 175, 55, 0.65);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
         transition: transform 0.3s ease;
     }
     .official-header .emblem-badge:hover {
-        transform: scale(1.1) rotate(8deg);
+        transform: scale(1.1) rotate(5deg);
     }
     .official-header h1 {
         margin: 0;
-        font-size: 24px;
+        font-size: 22px;
         font-weight: 800;
         color: #ffffff;
     }
     .official-header p {
         margin: 8px 0 0 0;
-        font-size: 16px;
-        color: #e2e8f0;
-        font-weight: 500;
+        font-size: 15px;
+        color: #f1f1f1;
+        letter-spacing: 0.5px;
     }
 
-    /* شريط الوقت والتاريخ الزجاجي */
-    .time-banner {
-        background: rgba(255, 255, 255, 0.55);
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
-        padding: 14px 22px;
-        border-radius: 16px;
-        border: 1px solid rgba(255, 255, 255, 0.75);
-        border-right: 5px solid #1d63b8;
-        box-shadow: 0 8px 24px rgba(31, 38, 135, 0.06);
-        margin-bottom: 22px;
-        font-weight: 700;
-        color: #0f172a;
-        display: flex;
-        justify-content: space-between;
-        animation: fadeInUp 0.6s ease-out;
+    /* شريط تنبيه التاريخ والوقت الزجاجي */
+    [data-testid="stAlert"] {
+        background: rgba(255, 255, 255, 0.58) !important;
+        backdrop-filter: blur(14px) !important;
+        -webkit-backdrop-filter: blur(14px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.75) !important;
+        border-right: 5px solid #1d63b8 !important;
+        border-radius: 14px !important;
+        box-shadow: 0 6px 20px rgba(31, 38, 135, 0.05) !important;
+        color: #0f172a !important;
     }
 
     /* نموذج الإدخال الزجاجي */
@@ -111,99 +125,44 @@ st.markdown(
         background: rgba(255, 255, 255, 0.6) !important;
         backdrop-filter: blur(16px) !important;
         -webkit-backdrop-filter: blur(16px) !important;
-        padding: 25px;
-        border-radius: 20px;
+        padding: 25px !important;
+        border-radius: 18px !important;
         border: 1px solid rgba(255, 255, 255, 0.8) !important;
-        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.08) !important;
-        animation: fadeInUp 0.8s ease-out;
+        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.07) !important;
     }
 
-    /* حقول الإدخال بتأثير زجاجي خفيف */
-    .stTextInput input, .stSelectbox div[data-baseweb="select"] > div {
-        background-color: rgba(255, 255, 255, 0.75) !important;
+    /* حقول الإدخال ومربع السجل الزجاجي */
+    .stTextInput input, .stTextArea textarea, .stSelectbox div[data-baseweb="select"] > div {
+        background-color: rgba(255, 255, 255, 0.72) !important;
+        backdrop-filter: blur(10px) !important;
         border-radius: 12px !important;
         border: 1px solid rgba(255, 255, 255, 0.9) !important;
-        box-shadow: inset 0 1px 3px rgba(0,0,0,0.04);
         transition: all 0.3s ease;
     }
-    .stTextInput input:focus {
+    .stTextInput input:focus, .stTextArea textarea:focus {
         background-color: rgba(255, 255, 255, 0.95) !important;
         border-color: #1d63b8 !important;
         box-shadow: 0 0 0 3px rgba(29, 99, 184, 0.15) !important;
     }
 
-    /* الأزرار بتأثير زجاجي لامع */
+    /* الأزرار الزجاجية اللامعة */
     .stButton > button, .stFormSubmitButton > button, .stDownloadButton > button {
-        width: 100%;
         background: linear-gradient(135deg, rgba(13, 59, 102, 0.92) 0%, rgba(29, 99, 184, 0.92) 100%) !important;
-        backdrop-filter: blur(8px);
+        backdrop-filter: blur(8px) !important;
         color: white !important;
         border: 1px solid rgba(255, 255, 255, 0.3) !important;
-        padding: 12px 24px !important;
         border-radius: 12px !important;
+        padding: 10px 22px !important;
         font-weight: 700 !important;
-        font-size: 16px !important;
+        box-shadow: 0 6px 18px rgba(29, 99, 184, 0.25) !important;
         transition: all 0.3s ease !important;
-        box-shadow: 0 6px 20px rgba(29, 99, 184, 0.25) !important;
     }
     .stButton > button:hover, .stFormSubmitButton > button:hover, .stDownloadButton > button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(29, 99, 184, 0.38) !important;
-    }
-
-    /* بطاقات عرض السجلات الزجاجية */
-    .record-card {
-        background: rgba(255, 255, 255, 0.58);
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
-        padding: 16px 20px;
-        border-radius: 16px;
-        margin-bottom: 14px;
-        border: 1px solid rgba(255, 255, 255, 0.75);
-        box-shadow: 0 6px 20px rgba(31, 38, 135, 0.06);
-        transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
-        animation: fadeInUp 0.5s ease-out;
-    }
-    .record-card:hover {
-        transform: translateX(-5px);
-        background: rgba(255, 255, 255, 0.8);
-        box-shadow: 0 10px 28px rgba(31, 38, 135, 0.12);
-    }
-    .card-positive {
-        border-right: 6px solid #10b981;
-    }
-    .card-negative {
-        border-right: 6px solid #ef4444;
-    }
-    .badge-positive {
-        background: rgba(209, 250, 229, 0.85);
-        color: #065f46;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 13px;
-        font-weight: 700;
-        border: 1px solid rgba(16, 185, 129, 0.3);
-    }
-    .badge-negative {
-        background: rgba(254, 226, 226, 0.85);
-        color: #991b1b;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 13px;
-        font-weight: 700;
-        border: 1px solid rgba(239, 68, 68, 0.3);
-    }
-
-    /* صندوق الإدارة الزجاجي */
-    [data-testid="stExpander"] {
-        background: rgba(255, 255, 255, 0.5) !important;
-        backdrop-filter: blur(12px) !important;
-        border-radius: 16px !important;
-        border: 1px solid rgba(255, 255, 255, 0.7) !important;
+        box-shadow: 0 8px 24px rgba(29, 99, 184, 0.38) !important;
     }
     </style>
     
-    <!-- الترويسة -->
     <div class="official-header">
         <span class="emblem-badge">🇴🇲</span>
         <h1>سلطنة عمان - وزارة التربية والتعليم</h1>
@@ -213,74 +172,88 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# جلب التاريخ والوقت
-now = datetime.now()
-current_date = now.strftime("%Y-%m-%d")
-current_time = now.strftime("%H:%M:%S")
-
-st.markdown(
-    f"""
-    <div class="time-banner">
-        <span>📅 التاريخ: {current_date}</span>
-        <span>⏰ الوقت: {current_time}</span>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
-
-# نموذج إدخال البيانات
-with st.form("data_form", clear_on_submit=True):
-    st.markdown("### 📝 تسجيل بيان جديد")
-    col1, col2 = st.columns(2)
-    with col1:
-        id_val = st.text_input("معرف الطالب (ID)", placeholder="مثال: 1024")
-        type_val = st.selectbox("نوع السجل", ["تعزيز", "مخالفة"])
-    with col2:
-        class_val = st.text_input("الفصل (Class)", placeholder="مثال: 10/أ")
-        details_val = st.text_input(
-            "التفاصيل", placeholder="اكتب سبب المخالفة أو التعزيز"
-        )
-
-    submit_button = st.form_submit_button(label="💾 إضافة وحفظ السجل")
-
-if submit_button:
-    if id_val and details_val and class_val:
-        entry = f"{type_val}|{id_val}|{details_val}|{current_date}|{current_time}|{class_val}\n"
-        with open("R.txt", "a", encoding="utf-8") as f:
-            f.write(entry)
-
-        st.success("✅ تمت إضافة وحفظ البيانات بنجاح!")
-        st.balloons()
-        time.sleep(1.8)
-        st.rerun()
-    else:
-        st.warning("⚠️ يرجى ملء جميع الحقول المطلوبة قبل الحفظ.")
-
-st.divider()
-st.subheader("📋 السجلات المحفوظة")
+# حساب الإحصائيات من الملف إن وجد
+violations_count = 0
+reinforcements_count = 0
+data = ""
 
 if os.path.exists("R.txt"):
     with open("R.txt", "r", encoding="utf-8") as f:
-        lines = [line.strip() for line in f.readlines() if line.strip()]
+        data = f.read()
+        for line in data.splitlines():
+            if line.startswith("النوع: مخالفة"):
+                violations_count += 1
+            elif line.startswith("النوع: تعزيز"):
+                reinforcements_count += 1
 
-    if lines:
-        # عرض السجلات كبطاقات زجاجية من الأحدث إلى الأقدم
-        for line in reversed(lines):
-            parts = line.split("|")
-            if len(parts) == 6:
-                r_type, r_id, r_details, r_date, r_time, r_class = parts
-                card_class = (
-                    "card-positive" if r_type == "تعزيز" else "card-negative"
-                )
-                badge_class = (
-                    "badge-positive" if r_type == "تعزيز" else "badge-negative"
-                )
-                icon = "🌟" if r_type == "تعزيز" else "⚠️"
+total_records = violations_count + reinforcements_count
 
-                st.markdown(
-                    f"""
-                    <div class="record-card {card_class}">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <span class="{badge_class}">{icon} {r_type}</span>
-                            <span style="color: #475569; font-size: 13px; font-weight: 500;">📅 {r_date} | ⏰ {r_time}</span>
-                        </div>
+# عرض الإحصائيات السريعة في 3 أعمدة زجاجية
+col1, col2, col3 = st.columns(3)
+col1.metric(label="📊 إجمالي السجلات", value=total_records)
+col2.metric(label="🌟 التعزيزات", value=reinforcements_count)
+col3.metric(label="⚠️ المخالفات", value=violations_count)
+
+st.write("")
+
+# جلب التاريخ والوقت الحالي بتوقيت سلطنة عمان
+now = datetime.now(ZoneInfo("Asia/Muscat"))
+current_date = now.strftime("%Y-%m-%d")
+current_time = now.strftime("%H:%M:%S")
+
+st.info(f"📅 التاريخ الحالي: {current_date} | ⏰ الساعة الحالية: {current_time}")
+
+# نموذج إدخال البيانات
+with st.form("data_form", clear_on_submit=True):
+    id_val = st.text_input("معرف الطالب (ID)")
+    type_val = st.selectbox("نوع السجل", ["مخالفة", "تعزيز"])
+    details_val = st.text_input("التفاصيل (سبب المخالفة أو نوع التعزيز)")
+    class_val = st.text_input("الفصل (Class)")
+
+    submit_button = st.form_submit_button(label="إضافة وحفظ")
+
+if submit_button:
+    if id_val.strip() and details_val.strip() and class_val.strip():
+        entry = f"النوع: {type_val} | المعرف: {id_val} | التفاصيل: {details_val} | التاريخ: {current_date} | الساعة: {current_time} | الفصل: {class_val}\n"
+
+        with open("R.txt", "a", encoding="utf-8") as f:
+            f.write(entry)
+
+        st.session_state.show_balloons = True
+        st.rerun()
+    else:
+        st.warning("يرجى ملء جميع الحقول المطلوبة قبل الإضافة.")
+
+st.divider()
+
+st.subheader("سجل المخالفات والتعزيزات المحفوظة في الملف")
+
+if data.strip():
+    st.text_area("جميع السجلات السابقة", data, height=200)
+
+    st.download_button(
+        label="تحميل ملف السجلات (R.txt)",
+        data=data,
+        file_name="R.txt",
+        mime="text/plain",
+    )
+
+    st.divider()
+
+    st.subheader("إدارة السجل (للمسؤول فقط)")
+    secret_code = st.text_input(
+        "أدخل الكود السري لحذف جميع السجلات", type="password"
+    )
+
+    # قراءة الكود السري من إعدادات Secrets بأمان
+    admin_password = st.secrets.get("ADMIN_PASSWORD", "2013")
+
+    if st.button("حذف السجل بالكامل"):
+        if secret_code == admin_password:
+            os.remove("R.txt")
+            st.success("تم حذف جميع السجلات السابقة بنجاح!")
+            st.rerun()
+        else:
+            st.error("الكود السري غير صحيح!")
+else:
+    st.info("لا يوجد سجل مسجل حتى الآن، قم بإضافة أول بيان.")
