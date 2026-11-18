@@ -258,7 +258,7 @@ current_time = now.strftime("%H:%M:%S")
 
 st.info(f"📅 التاريخ الحالي: {current_date} | ⏰ الساعة الحالية: {current_time}")
 
-# 4. نموذج إدخال البيانات مقسم إلى أعمدة متجاورة
+# نموذج إدخال البيانات مقسم إلى أعمدة متجاورة
 with st.form("data_form", clear_on_submit=True):
     st.markdown("#### 📝 تسجيل بيان جديد")
     row1_col1, row1_col2 = st.columns(2)
@@ -267,7 +267,7 @@ with st.form("data_form", clear_on_submit=True):
     with row1_col2:
         class_val = st.text_input("الفصل (Class)")
 
-    row2_col1, row2_col2 = st.columns([1, 2])
+    row2_col1, row2_col2 = st.columns(2)
     with row2_col1:
         type_val = st.selectbox("نوع السجل", ["مخالفة", "تعزيز"])
     with row2_col2:
