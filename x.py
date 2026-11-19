@@ -174,6 +174,16 @@ if lines:
   for line in reversed(lines):
     render_card(line)
 
+  # زر تحميل ملف السجلات بصيغة txt
+  st.markdown("")
+  st.download_button(
+      label="📥 تحميل ملف السجلات (TXT)",
+      data=data,
+      file_name="school_records.txt",
+      mime="text/plain",
+      use_container_width=True,
+  )
+
   st.markdown("")
   with st.expander("🔒 إدارة وحذف السجلات (محمية بكلمة مرور)"):
     entered_pin = st.text_input(
