@@ -58,7 +58,7 @@ st.markdown(
     </style>
     <div class='official-header'>
         <span class='emblem-badge'>🇴🇲</span>
-        <h1>سلطنة عمان - وزارة التربية والتعليم</h1>
+        <h1>سلطنة عمان - وزارة التعليم</h1>
         <p>نظام سجل المخالفات والتعزيزات المدرسية</p>
     </div>
     """,
