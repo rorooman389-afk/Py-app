@@ -149,7 +149,7 @@ with st.form("data_form", clear_on_submit=True):
 
   details = st.text_area("التفاصيل والملاحظات")
   add_pin = st.text_input(
-      "أدخل رمز الحماية للإضافة (1234):", type="password"
+      "أدخل رمز الحماية للإضافة:", type="password"
   )
 
   submitted = st.form_submit_button("💾 حفظ السجل", use_container_width=True)
