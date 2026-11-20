@@ -156,7 +156,7 @@ with st.form("data_form", clear_on_submit=True):
 
   if submitted:
     if add_pin != "1234":
-      st.error("❌ رمز الحماية للإضافة غير صحيح! (الرمز المطلوبة: 1234)")
+      st.error("رمز الحماية للإضافة غير صحيحة")
     elif student_id.strip() and student_class.strip() and details.strip():
       clean_details = details.replace("\n", " ").strip()
       new_entry = f"النوع: {record_type} | المعرف: {student_id.strip()} | التفاصيل: {clean_details} | التاريخ: {current_date} | الساعة: {current_time} | الفصل: {student_class.strip()}\n"
