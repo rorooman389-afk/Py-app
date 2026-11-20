@@ -137,7 +137,7 @@ current_time = now.strftime("%H:%M:%S")
 st.info(f"📅 التاريخ الحالي: {current_date} | ⏰ الساعة الحالية: {current_time}")
 
 with st.form("data_form", clear_on_submit=True):
-  st.markdown("#### 📝 تسجيل بيان جديد")
+  st.markdown("#### 📝 تسجيل بيان جديد (محمي بكلمة مرور)")
 
   col_f1, col_f2, col_f3 = st.columns(3)
   with col_f1:
@@ -148,10 +148,16 @@ with st.form("data_form", clear_on_submit=True):
     student_class = st.text_input("الفصل الدراسي (مثال: 10/2)")
 
   details = st.text_area("التفاصيل والملاحظات")
+  add_pin = st.text_input(
+      "أدخل رمز الحماية للإضافة (1234):", type="password"
+  )
+
   submitted = st.form_submit_button("💾 حفظ السجل", use_container_width=True)
 
   if submitted:
-    if student_id.strip() and student_class.strip() and details.strip():
+    if add_pin != "1234":
+      st.error("❌ رمز الحماية للإضافة غير صحيح! (الرمز المطلوبة: 1234)")
+    elif student_id.strip() and student_class.strip() and details.strip():
       clean_details = details.replace("\n", " ").strip()
       new_entry = f"النوع: {record_type} | المعرف: {student_id.strip()} | التفاصيل: {clean_details} | التاريخ: {current_date} | الساعة: {current_time} | الفصل: {student_class.strip()}\n"
 
@@ -161,6 +167,7 @@ with st.form("data_form", clear_on_submit=True):
       if record_type == "تعزيز":
         st.session_state.show_balloons = True
 
+      st.success("✅ تم حفظ السجل بنجاح!")
       st.rerun()
     else:
       st.warning("⚠️ يرجى تعبئة جميع الحقول قبل الحفظ.")
@@ -185,7 +192,7 @@ if lines:
   )
 
   st.markdown("")
-  with st.expander("🔒 إدارة وحذف السجلات (محمية بكلمة مرور)"):
+  with st.expander("🔒 إدارة وحذف السجلات (محمية بكلمة مرور 2013)"):
     entered_pin = st.text_input(
         "أدخل رمز الحماية (PIN):", type="password", key="admin_pin_input"
     )
